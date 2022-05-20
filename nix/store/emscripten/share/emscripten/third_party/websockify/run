@@ -1,0 +1,5 @@
+#!/nix/store/wq6s8i407ic4qp1dvd5yhrnd0kflzh6x-python3-3.9.12/bin/python
+
+import websockify
+
+websockify.websocketproxy.websockify_init()

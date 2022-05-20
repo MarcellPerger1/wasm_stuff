@@ -1,0 +1,1 @@
+sed -i.bak "s/..\/..\/..\/..\/nix\/store\/[a-zA-Z0-9]*-emscripten-[0-9\.]*/..\/nix\/store\/emscripten/g" ./res/hw.wasm.map

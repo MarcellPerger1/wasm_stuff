@@ -1,0 +1,1 @@
+emcc ./hw.cpp -o ./res/hw.js -sEXPORTED_FUNCTIONS=_main,_func2,_myFunction -lembind --bind -gsource-map --source-map-base ./
