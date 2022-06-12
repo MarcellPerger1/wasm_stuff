@@ -7,13 +7,13 @@ var moduleInit = null;
 /**
 @return {Promise<_ModType>}
 */
-export default async function init() {
-  if (moduleInit == null) { moduleInit = _init(); }
+export default async function init(Module) {
+  if (moduleInit == null) { moduleInit = _init(Module); }
   return moduleInit;
 }
 
-export async function _init() {
-  var orig = window.orig_mod = await initEM();
+export async function _init(Module) {
+  var orig = window.orig_mod = await initEM(Module);
   let objToC = null;
   for(let tp of Object.values(orig.registeredTypes)){
     if(tp.name=="emscripten::val"){
@@ -53,6 +53,7 @@ export async function _init() {
      */
     cwrap(ident, returnType, argTypes, opts) {
       return {
+        // trick to name function dynamically
         [ident]() {
           return mod.ccall(ident, returnType, argTypes, arguments, opts)
         }

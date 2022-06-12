@@ -8,12 +8,6 @@ hidden=[".config"]
 [nix]
 channel = "stable-21_11"
 
-[languages.cpp]
-pattern = "**/*.{cpp,h}"
-
-[languages.cpp.languageServer]
-start = "ccls"
-
 
 [languages.html]
 pattern = "**/*.html"

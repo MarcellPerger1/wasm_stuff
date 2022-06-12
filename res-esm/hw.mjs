@@ -2477,6 +2477,35 @@ var ASM_CONSTS = {
       });
     }
 
+  function requireHandle(handle) {
+      if (!handle) {
+          throwBindingError('Cannot use deleted val. handle = ' + handle);
+      }
+      return emval_handle_array[handle].value;
+    }
+  
+  function getTypeName(type) {
+      var ptr = ___getTypeName(type);
+      var rv = readLatin1String(ptr);
+      _free(ptr);
+      return rv;
+    }
+  function requireRegisteredType(rawType, humanName) {
+      var impl = registeredTypes[rawType];
+      if (undefined === impl) {
+          throwBindingError(humanName + " has unknown type " + getTypeName(rawType));
+      }
+      return impl;
+    }
+  function __emval_as(handle, returnType, destructorsRef) {
+      handle = requireHandle(handle);
+      returnType = requireRegisteredType(returnType, 'emval::as');
+      var destructors = [];
+      var rd = __emval_register(destructors);
+      HEAP32[destructorsRef >> 2] = rd;
+      return returnType['toWireType'](destructors, handle);
+    }
+
   function __emval_allocateDestructors(destructorsRef) {
       var destructors = [];
       HEAP32[destructorsRef >> 2] = __emval_register(destructors);
@@ -2494,13 +2523,6 @@ var ASM_CONSTS = {
     }
   
   var emval_methodCallers = [];
-  
-  function requireHandle(handle) {
-      if (!handle) {
-          throwBindingError('Cannot use deleted val. handle = ' + handle);
-      }
-      return emval_handle_array[handle].value;
-    }
   function __emval_call_void_method(caller, handle, methodName, args) {
       caller = emval_methodCallers[caller];
       handle = requireHandle(handle);
@@ -2532,19 +2554,6 @@ var ASM_CONSTS = {
       return id;
     }
   
-  function getTypeName(type) {
-      var ptr = ___getTypeName(type);
-      var rv = readLatin1String(ptr);
-      _free(ptr);
-      return rv;
-    }
-  function requireRegisteredType(rawType, humanName) {
-      var impl = registeredTypes[rawType];
-      if (undefined === impl) {
-          throwBindingError(humanName + " has unknown type " + getTypeName(rawType));
-      }
-      return impl;
-    }
   function __emval_lookupTypes(argCount, argTypes) {
       var a = new Array(argCount);
       for (var i = 0; i < argCount; ++i) {
@@ -2623,10 +2632,39 @@ var ASM_CONSTS = {
       return __emval_addMethodCaller(invokerFunction);
     }
 
+  function __emval_get_property(handle, key) {
+      handle = requireHandle(handle);
+      key = requireHandle(key);
+      return __emval_register(handle[key]);
+    }
+
   function __emval_incref(handle) {
       if (handle > 4) {
           emval_handle_array[handle].refcount += 1;
       }
+    }
+
+  function __emval_new_cstring(v) {
+      return __emval_register(getStringOrSymbol(v));
+    }
+
+  function runDestructors(destructors) {
+      while (destructors.length) {
+          var ptr = destructors.pop();
+          var del = destructors.pop();
+          del(ptr);
+      }
+    }
+  function __emval_run_destructors(handle) {
+      var destructors = emval_handle_array[handle].value;
+      runDestructors(destructors);
+      __emval_decref(handle);
+    }
+
+  function __emval_take_value(type, argv) {
+      type = requireRegisteredType(type, '_emval_take_value');
+      var v = type['readValueFromPointer'](argv);
+      return __emval_register(v);
     }
 
   function _abort() {
@@ -5736,11 +5774,16 @@ var asmLibraryArg = {
   "_embind_register_std_string": __embind_register_std_string,
   "_embind_register_std_wstring": __embind_register_std_wstring,
   "_embind_register_void": __embind_register_void,
+  "_emval_as": __emval_as,
   "_emval_call_void_method": __emval_call_void_method,
   "_emval_decref": __emval_decref,
   "_emval_get_global": __emval_get_global,
   "_emval_get_method_caller": __emval_get_method_caller,
+  "_emval_get_property": __emval_get_property,
   "_emval_incref": __emval_incref,
+  "_emval_new_cstring": __emval_new_cstring,
+  "_emval_run_destructors": __emval_run_destructors,
+  "_emval_take_value": __emval_take_value,
   "abort": _abort,
   "emscripten_memcpy_big": _emscripten_memcpy_big,
   "emscripten_resize_heap": _emscripten_resize_heap,
