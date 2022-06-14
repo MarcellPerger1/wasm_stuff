@@ -1,3 +1,7 @@
+// this is VERY inefficient bc looping over all types 
+// but only way to do it without meddling inside emscripten 
+// or overriding some builtin emsc functions in the pre-/post- amble
+// later could use to build a more useful data representation for the regitered types
 function findValType(regTypes){
   for(let tp of Object.values(regTypes)){
     if(tp.name=="emscripten::val") return tp;
