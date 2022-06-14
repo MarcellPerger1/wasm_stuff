@@ -50,11 +50,13 @@ EMSCRIPTEN_KEEPALIVE void func2(EM_VAL x) {
   val::global("console").call<void>("log", xv["a"]["length"]);
   World w(xv["a"]);
   val::global("console").call<void>("log", w.get_block(1, 1, 0));
+  glClearColor(0,0,1,1);
+  glClear(GL_COLOR_BUFFER_BIT);
 }
 
 
 int main(int argc, char **argv) {
-  std::cout << "Hello world, the code works!! 0x1F\n";
+  std::cout << "Hello world, the code works!! 0x29\n";
   return 0;
 }
 

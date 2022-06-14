@@ -59,6 +59,8 @@ export async function _init(Module) {
         }
       }[ident];
     },
+    Module: orig,
+    orig: orig
   }
   return mod;
 }
