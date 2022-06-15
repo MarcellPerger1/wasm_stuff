@@ -56,7 +56,7 @@ EMSCRIPTEN_KEEPALIVE void func2(EM_VAL x) {
 
 
 int main(int argc, char **argv) {
-  std::cout << "Hello world, the code works!! 0x29\n";
+  std::cout << "Hello world, the code works!! 0x2A\n";
   return 0;
 }
 
