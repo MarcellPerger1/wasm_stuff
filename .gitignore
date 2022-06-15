@@ -3,3 +3,8 @@ nix/
 
 # build targets
 res-esm/
+*.wasm
+*.map
+
+# backups
+*.bak
