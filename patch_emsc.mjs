@@ -65,9 +65,23 @@ export function patchModuleInplaceSaveCopy(Module){
   return Object.assign(Module, getModulePatches(_modCopy));
 }
 
+/**
+ * Rename original emscrtipen funcs in `Module` 
+ * that are replaced when patching the module
+ * to make them available if needed for anything
+ * (eg. the new patched funcs eventually call 
+ * the old ones using these new names).
+ * This is done (usually) be prefixing them with an `_`.
+ * @param {Object} Module
+*/
+function renameOrigFuncs(Module){
+  Module._ccall = Module.ccall;
+  Module._cwrap = Module.cwrap;
+}
+
 export function patchModuleInplace(Module){
   let valType = findValType(Module.registeredTypes);
-  Module._ccall = Module.ccall;
+  renameOrigFuncs();
   let patches = {
     objToC(v) { 
       return valType.toWireType(null, v);
