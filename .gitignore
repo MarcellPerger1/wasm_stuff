@@ -1,8 +1,5 @@
 # Replit stuff
 nix/
 
-.ccls-cache/
-
 # build targets
-res/
 res-esm/
