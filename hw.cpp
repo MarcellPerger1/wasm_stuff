@@ -5,19 +5,23 @@
 #include <webgl/webgl1.h>
 
 #ifdef __cplusplus
-#define NOMANGLE extern "C" {
+#define NOMANGLE extern "C" 
+#define NOMANGLE_BLOCK NOMANGLE {
 #define NOMANGLE_END }
 #else
 #define NOMANGLE
+#define NOMANGLE_BLOCK
 #define NOMANGLE_END
 #endif
 
-NOMANGLE
+
 using std::vector;
 using emscripten::val;
 using emscripten::internal::EM_VAL;
 
 typedef unsigned long u32;
+
+NOMANGLE_BLOCK
 
 EMSCRIPTEN_KEEPALIVE void myFunction() {
   printf("MyFunction Called\n");
@@ -56,9 +60,8 @@ EMSCRIPTEN_KEEPALIVE void func2(EM_VAL x) {
 
 
 int main(int argc, char **argv) {
-  std::cout << "Hello world, the code works!! 0x2A\n";
+  std::cout << "Hello world, the code works!! 0x2B\n";
   return 0;
 }
-
 
 NOMANGLE_END
